@@ -60,6 +60,8 @@ python player.py
 
 本项目因一开始使用了绝对坐标进行 GUI 设计，故无最大化与调整大小功能。
 
+本项目暂时只支持 mp3 文件与 flac 文件。
+
 不推荐在非 Windows 平台运行本项目。
 
 本项目暂时仅在 Python 3.9.0 64-bit on Windows 10 20H2 环境下进行过测试，如有 BUG 请报 issue。
