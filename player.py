@@ -41,7 +41,7 @@ class main_frame(wx.Frame):
         self.album_list = []
         self.length_list = []
         
-        wx.Frame.__init__(self, None, wx.ID_ANY, '据说是个播放器', size=(1200, 800), style=wx.DEFAULT_FRAME_STYLE ^ (wx.MAXIMIZE_BOX | wx.RESIZE_BORDER))
+        wx.Frame.__init__(self, None, wx.ID_ANY, 'YAMP _by Wenti-D_', size=(1200, 800), style=wx.DEFAULT_FRAME_STYLE ^ (wx.MAXIMIZE_BOX | wx.RESIZE_BORDER))
         self.SetBackgroundColour((255, 255, 255))
         self.Bind(wx.EVT_CLOSE, self.exiting)
         self.Center(wx.BOTH)
@@ -288,7 +288,7 @@ class main_frame(wx.Frame):
                     double_line[i] = 1
                 else:
                     double_line[i] = 0
-            if the_time - the_current_time - self.offset + 0.16 <= .006:
+            if the_time - the_current_time + self.offset <= .006:
                 for i in range(5):
                     if double_line[i]:
                         wx.FindWindowById(16 * (i + 3)).SetLabelText(org[i])
