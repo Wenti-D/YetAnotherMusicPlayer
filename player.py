@@ -197,6 +197,7 @@ class main_frame(wx.Frame):
 
         for i in range(5):
             self.line_panel = wx.Panel(self.lyrics_panel, id=8 * i + 8, pos=(0, 70 * i), size=(700, 70))
+            self.line_panel.SetDoubleBuffered(True)
         
         self.line1_text_up = wx.StaticText(wx.FindWindowById(8), 48, "", pos=(0, 10), size=(700, 19), style=wx.ALIGN_CENTER_HORIZONTAL)
         self.line1_text_down = wx.StaticText(wx.FindWindowById(8), 56, "", pos=(0, 29), size=(700, 15), style=wx.ALIGN_CENTER_HORIZONTAL)
@@ -540,10 +541,10 @@ class main_frame(wx.Frame):
             self.time_text_l.SetLabelText(self.time_formatting(current_time))
             if not self.circle_button.GetValue():
                 continue
-            elif current_time >= self.length_list[self.current_idx] - .5:
+            elif current_time >= self.length_list[self.current_idx] - .2:
                 self.next_song('a')
                 break
-            time.sleep(.5)
+            time.sleep(.2)
         else:
             self.time_text_l.SetLabelText(self.time_formatting(0))
             self.play_pause_button.SetBitmapLabel(wx.Bitmap("./assets/play.png", wx.BITMAP_TYPE_ANY))
