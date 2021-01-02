@@ -101,16 +101,16 @@ class main_frame(wx.Frame):
         for music_idx in range(self.music_num):
             self.music_panel = wx.Panel(self.list_scroll, 8 * music_idx + 1, pos=(0, music_idx * 40), size=(380, 40))
             self.music_panel.SetBackgroundColour((233, 233, 233))
-            self.music_title_panel = wx.Panel(self.music_panel, 8 * music_idx + 2, pos=(30, 10), size=(160, 20))
-            self.music_artist_panel = wx.Panel(self.music_panel, 8 * music_idx + 3, pos=(210, 15), size=(80, 13))
-            self.music_length_panel = wx.Panel(self.music_panel, 8 * music_idx + 4, pos=(310, 15), size=(40, 13))
+            self.music_title_panel = wx.Panel(self.music_panel, 8 * music_idx + 2, pos=(30, 13), size=(160, 15))
+            self.music_artist_panel = wx.Panel(self.music_panel, 8 * music_idx + 3, pos=(210, 13), size=(87, 15))
+            self.music_length_panel = wx.Panel(self.music_panel, 8 * music_idx + 4, pos=(310, 13), size=(40, 15))
             self.music_title_panel.SetDoubleBuffered(True)
             self.music_artist_panel.SetDoubleBuffered(True)
             self.music_length_panel.SetDoubleBuffered(True)
 
             the_length = self.time_formatting(self.length_list[music_idx])
 
-            self.music_title_text = wx.StaticText(self.music_title_panel, 8 * music_idx + 5, self.music_title_list[music_idx], pos=(0, 0), size=(50, 10))
+            self.music_title_text = wx.StaticText(self.music_title_panel, 8 * music_idx + 5, self.music_title_list[music_idx], pos=(0, -4), size=(50, 10))
             self.music_artist_text = wx.StaticText(self.music_artist_panel, 8 * music_idx + 6, self.artist_list[music_idx], pos=(0, -4), size=(100, 10))
             self.music_length_text = wx.StaticText(self.music_length_panel, 8 * music_idx + 7, the_length, pos=(0, -4), size=(40, 10), style=wx.ALIGN_RIGHT)
 
