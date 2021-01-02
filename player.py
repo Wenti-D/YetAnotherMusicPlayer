@@ -362,13 +362,12 @@ class main_frame(wx.Frame):
         #if not os.path.exists(self.music_folder + album + '.png'):
         try:
             album = song.tags["TALB"].text[0]
-        except:
-            pass
-        else:
             picture = song.tags.get("APIC:").data
             album_pict = Image.open(BytesIO(picture))
             album_pict.thumbnail((200, 200), resample=Image.BICUBIC)
             album_pict.save(self.album_folder + album.replace('/','-') + '.png', 'png')
+        except:
+            pass
     
     def collect_cover_flac(self, filename):
         """
@@ -378,24 +377,26 @@ class main_frame(wx.Frame):
         #if not os.path.exists(self.music_folder + album + '.png'):
         try:
             album = song.tags['ALBUM'][0]
-        except:
-            pass
-        else:
             picture = song.pictures[0].data
             album_pict = Image.open(BytesIO(picture))
             album_pict.thumbnail((200, 200), resample=Image.BICUBIC)
             album_pict.save(self.album_folder + album.replace('/','-') + '.png', 'png')
+        except:
+            pass
 
     def collect_lyrics_mp3(self, filename):
         """
         获取 mp3 文件内嵌歌词并保存至 ./Lyrics/
         """
-        song = MP3(self.music_folder + filename)
-        lyrics = song.tags.get("USLT::XXX")
-        if lyrics != None:
-            file = open(self.lyrics_folder + filename[:-4] + '.lrc', "w", encoding='utf-8', newline="")
-            file.writelines(str(lyrics))
-            file.close()
+        try:
+            song = MP3(self.music_folder + filename)
+            lyrics = song.tags.get("USLT::XXX")
+            if lyrics != None:
+                file = open(self.lyrics_folder + filename[:-4] + '.lrc', "w", encoding='utf-8', newline="")
+                file.writelines(str(lyrics))
+                file.close()
+        except:
+            pass
 
     def collect_lyrics_flac(self, filename):
         """
@@ -404,12 +405,11 @@ class main_frame(wx.Frame):
         song = FLAC(self.music_folder + filename)
         try:
             lyrics = song.tags["LYRICS"][0]
-        except:
-            pass
-        else:
             file = open(self.lyrics_folder + filename[:-5] + ".lrc", "w", encoding="utf-8", newline="")
             file.writelines(str(lyrics))
             file.close()
+        except:
+            pass
 
     def draw_control_panel(self):
         """
@@ -541,7 +541,7 @@ class main_frame(wx.Frame):
             self.time_text_l.SetLabelText(self.time_formatting(current_time))
             if not self.circle_button.GetValue():
                 continue
-            elif current_time >= self.length_list[self.current_idx] - .2:
+            elif current_time >= self.length_list[self.current_idx] - .21:
                 self.next_song('a')
                 break
             time.sleep(.2)
