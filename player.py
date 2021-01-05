@@ -40,7 +40,7 @@ class main_frame(wx.Frame):
         self.artist_list = []
         self.album_list = []
         self.length_list = []
-        
+
         wx.Frame.__init__(self, None, wx.ID_ANY, 'YAMP _by Wenti-D_', size=(1200, 800), style=wx.DEFAULT_FRAME_STYLE ^ (wx.MAXIMIZE_BOX | wx.RESIZE_BORDER))
         self.SetBackgroundColour((255, 255, 255))
         self.Bind(wx.EVT_CLOSE, self.exiting)
@@ -48,7 +48,7 @@ class main_frame(wx.Frame):
         self.icon = wx.Icon('./assets/icon.ico', wx.BITMAP_TYPE_ICO)
         self.SetIcon(self.icon)
 
-        self.draw_navi_title_panel()
+        self.draw_list_title_panel()
         self.draw_list_panal()
         self.draw_current_title()
         self.draw_line()
@@ -57,18 +57,20 @@ class main_frame(wx.Frame):
         self.draw_lyrics_panel()
         self.draw_control_panel()
 
-    def draw_navi_title_panel(self):
+    def draw_list_title_panel(self):
         """
         左侧标题
         """
-        self.navi_title_panel = wx.Panel(self, pos=(0, 0), size=(380, 60))
-        self.navi_title_panel.SetBackgroundColour((233, 233, 233))
+        self.list_title_panel = wx.Panel(self, pos=(0, 0), size=(380, 60))
+        self.list_title_panel.SetBackgroundColour((233, 233, 233))
 
-        self.title_text = wx.StaticText(self.navi_title_panel, wx.ID_ANY, "本地音乐", pos=(20, 20))
-        self.title_font = wx.Font(15, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑")
+        self.list_title_font = wx.SystemSettings.GetFont(wx.SYS_DEFAULT_GUI_FONT)
+        self.list_title_font.SetPointSize(15)
+
+        self.title_text = wx.StaticText(self.list_title_panel, wx.ID_ANY, "本地音乐", pos=(20, 20))
 
         self.title_text.SetOwnForegroundColour((0, 0, 0))
-        self.title_text.SetOwnFont(self.title_font)
+        self.title_text.SetOwnFont(self.list_title_font)
     
     def time_formatting(self, time):
         """
@@ -101,23 +103,19 @@ class main_frame(wx.Frame):
         for music_idx in range(self.music_num):
             self.music_panel = wx.Panel(self.list_scroll, 8 * music_idx + 1, pos=(0, music_idx * 40), size=(380, 40))
             self.music_panel.SetBackgroundColour((233, 233, 233))
-            self.music_title_panel = wx.Panel(self.music_panel, 8 * music_idx + 2, pos=(30, 13), size=(160, 15))
-            self.music_artist_panel = wx.Panel(self.music_panel, 8 * music_idx + 3, pos=(210, 13), size=(87, 15))
-            self.music_length_panel = wx.Panel(self.music_panel, 8 * music_idx + 4, pos=(310, 13), size=(40, 15))
+            self.music_title_panel = wx.Panel(self.music_panel, 8 * music_idx + 2, pos=(30, 12), size=(160, 20))
+            self.music_artist_panel = wx.Panel(self.music_panel, 8 * music_idx + 3, pos=(210, 12), size=(87, 20))
+            self.music_length_panel = wx.Panel(self.music_panel, 8 * music_idx + 4, pos=(300, 12), size=(50, 20))
             self.music_title_panel.SetDoubleBuffered(True)
             self.music_artist_panel.SetDoubleBuffered(True)
             self.music_length_panel.SetDoubleBuffered(True)
 
             the_length = self.time_formatting(self.length_list[music_idx])
 
-            self.music_title_text = wx.StaticText(self.music_title_panel, 8 * music_idx + 5, self.music_title_list[music_idx], pos=(0, -4), size=(50, 10))
-            self.music_artist_text = wx.StaticText(self.music_artist_panel, 8 * music_idx + 6, self.artist_list[music_idx], pos=(0, -4), size=(100, 10))
-            self.music_length_text = wx.StaticText(self.music_length_panel, 8 * music_idx + 7, the_length, pos=(0, -4), size=(40, 10), style=wx.ALIGN_RIGHT)
+            self.music_title_text = wx.StaticText(self.music_title_panel, 8 * music_idx + 5, self.music_title_list[music_idx], pos=(0, 0), size=(250, 20))
+            self.music_artist_text = wx.StaticText(self.music_artist_panel, 8 * music_idx + 6, self.artist_list[music_idx], pos=(0, 0), size=(100, 20))
+            self.music_length_text = wx.StaticText(self.music_length_panel, 8 * music_idx + 7, the_length, pos=(0, 0), size=(50, 20), style=wx.ALIGN_RIGHT)
 
-            self.music_panel_font = wx.Font(10, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑")
-            self.music_title_text.SetOwnFont(self.music_panel_font)
-            self.music_artist_text.SetOwnFont(self.music_panel_font)
-            self.music_length_text.SetOwnFont(self.music_panel_font)
             wx.FindWindowById(8 * music_idx + 1).Bind(wx.EVT_ENTER_WINDOW, lambda evt="a", i=8 * music_idx + 1: self.enter_music_list('a', i))
             for j in range(2,8):
                 wx.FindWindowById(8 * music_idx + j).Bind(wx.EVT_ENTER_WINDOW, self.inner_music_list)
@@ -145,7 +143,7 @@ class main_frame(wx.Frame):
         """
         嗯……画线
         """
-        self.line_panel_l = wx.Panel(self.navi_title_panel, pos=(20, 59), size=(333, 1))
+        self.line_panel_l = wx.Panel(self.list_title_panel, pos=(20, 59), size=(333, 1))
         self.line_panel_l.SetOwnBackgroundColour((136, 136, 136))
         self.line_panel_r = wx.Panel(self, pos=(410, 70), size=(695, 2))
         self.line_panel_r.SetOwnBackgroundColour((40, 170, 255))
@@ -157,7 +155,12 @@ class main_frame(wx.Frame):
         self.current_title_panel = wx.Panel(self, pos=(380, 0), size=(820, 70))
 
         self.play_now_text = wx.StaticText(self.current_title_panel, wx.ID_ANY, "正在播放", pos=(40, 15))
-        self.play_now_font = wx.Font(24, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_LIGHT, False, "微软雅黑 Light")
+        try:
+            self.play_now_font = wx.Font(24, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_LIGHT, False, "微软雅黑 Light")
+        except:
+            self.play_now_font = wx.SystemSettings.GetFont(wx.SYS_DEFAULT_GUI_FONT)
+            self.play_now_font.SetPointSize(24)
+            self.play_now_font.SetWeight(wx.FONTWEIGHT_LIGHT)
 
         self.play_now_text.SetOwnForegroundColour((0, 0, 0))
         self.play_now_text.SetOwnFont(self.play_now_font)
@@ -179,8 +182,11 @@ class main_frame(wx.Frame):
         self.current_song_artist_text = wx.StaticText(self.current_song_info_panel, wx.ID_ANY, "真的不放点歌吗", pos=(50, 135))
         self.current_song_album_text = wx.StaticText(self.current_song_info_panel, wx.ID_ANY, "确定不放点歌吗", pos=(50, 163))
 
-        self.song_title_font = wx.Font(18, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "微软雅黑")
-        self.song_other_font = wx.Font(12, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑")
+        self.song_title_font = wx.SystemSettings.GetFont(wx.SYS_DEFAULT_GUI_FONT)
+        self.song_title_font.SetPointSize(18)
+        self.song_title_font.SetWeight(wx.FONTWEIGHT_BOLD)
+        self.song_other_font = wx.SystemSettings.GetFont(wx.SYS_DEFAULT_GUI_FONT)
+        self.song_other_font.SetPointSize(12)
         
         self.current_song_title_text.SetOwnFont(self.song_title_font)
         self.current_song_artist_text.SetOwnFont(self.song_other_font)
@@ -210,10 +216,16 @@ class main_frame(wx.Frame):
         self.line5_text_up = wx.StaticText(wx.FindWindowById(40), 112, "", pos=(0, 10), size=(700, 19), style=wx.ALIGN_CENTER_HORIZONTAL)
         self.line5_text_down = wx.StaticText(wx.FindWindowById(40), 120, "", pos=(0, 29), size=(700, 15), style=wx.ALIGN_CENTER_HORIZONTAL)
 
-        self.up_font_center = wx.Font(12, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "微软雅黑")
-        self.down_font_center = wx.Font(11, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "微软雅黑")
-        self.up_font = wx.Font(10, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑")
-        self.down_font = wx.Font(9, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑")
+        self.up_font_center = wx.SystemSettings.GetFont(wx.SYS_DEFAULT_GUI_FONT)
+        self.up_font_center.SetPointSize(12)
+        self.up_font_center.SetWeight(wx.FONTWEIGHT_BOLD)
+        self.down_font_center = wx.SystemSettings.GetFont(wx.SYS_DEFAULT_GUI_FONT)
+        self.down_font_center.SetPointSize(11)
+        self.down_font_center.SetWeight(wx.FONTWEIGHT_BOLD)
+        self.up_font = wx.SystemSettings.GetFont(wx.SYS_DEFAULT_GUI_FONT)
+        self.up_font.SetPointSize(10)
+        self.down_font = wx.SystemSettings.GetFont(wx.SYS_DEFAULT_GUI_FONT)
+        self.down_font.SetPointSize(9)
 
         for i in (1,2,4,5):
             wx.FindWindowById(8 * (4 + 2 * i)).SetOwnForegroundColour((135, 135, 135))
