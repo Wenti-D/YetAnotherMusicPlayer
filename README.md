@@ -31,7 +31,7 @@
     pip install -u pillow
     ```
 
-安装完成后，在本项目根目录下打开终端窗口，执行
+安装完成后，将本项目找个合适的地方克隆下来，在本项目根目录下打开终端窗口，执行
 ```
 python player.py
 ```
@@ -43,7 +43,7 @@ python player.py
 
 ![初始状态](readme_assets/initialize.png)
 
-只需将音乐文件移入“Music”文件夹，重新运行程序，即可识别该文件夹下的音乐文件并自动处理，并将提取出来的专辑封面写入 `./Album/专辑名称.png` 文件，将提取出来的内嵌歌词写入 `./Lyrics/歌曲文件名.lrc` 文件。
+只需将音乐文件移入“Music”文件夹，重新运行程序，即可识别该文件夹下的音乐文件并自动处理，并将提取出来的专辑封面写入 `./Album/专辑名称.png` 文件，将提取出来的内嵌歌词写入 `./Lyrics/歌曲文件名.lrc` 文件。窗口的左侧是当前音乐列表，双击即可播放。
 
 由于本项目根据音乐文件内嵌的标签来识别歌曲信息，若想修改信息，只能通过歌曲标签编辑软件（如 [音乐标签](https://www.cnblogs.com/vinlxc/p/11347744.html)）或使用 Python 的 `mutagen` 包进行修改。
 
@@ -62,7 +62,7 @@ python player.py
 
 本项目暂时只支持 mp3 文件与 flac 文件。
 
-不推荐在非 Windows 平台运行本项目。
+**不推荐在非 Windows 平台运行本项目。**
 
 本项目暂时仅在 Python 3.9.0 64-bit on Windows 10 20H2 环境下进行过测试，如有 BUG 请报 issue。
 
