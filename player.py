@@ -551,16 +551,14 @@ class main_frame(wx.Frame):
         while self.music.get_busy():
             current_time = self.music.get_pos() / 1000
             self.time_text_l.SetLabelText(self.time_formatting(current_time))
-            if not self.circle_button.GetValue():
-                continue
-            elif current_time >= self.length_list[self.current_idx] - .21:
-                self.next_song('a')
-                break
-            time.sleep(.2)
+            time.sleep(.5)
         else:
+            if self.circle_button.GetValue():
+                self.next_song('a')
+            else:
+                self.play_pause_button.SetBitmapLabel(wx.Bitmap("./assets/play.png", wx.BITMAP_TYPE_ANY))
+                self.control_panel.Refresh()
             self.time_text_l.SetLabelText(self.time_formatting(0))
-            self.play_pause_button.SetBitmapLabel(wx.Bitmap("./assets/play.png", wx.BITMAP_TYPE_ANY))
-            self.control_panel.Refresh()
 
     def change_volume(self, evt):
         """
