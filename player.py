@@ -304,7 +304,7 @@ class main_frame(wx.Frame):
                     double_line[i] = 1
                 else:
                     double_line[i] = 0
-            if the_time - the_current_time + self.offset <= .006:
+            if the_time - the_current_time - self.offset <= .006:
                 for i in range(5):
                     if double_line[i]:
                         wx.FindWindowById(16 * (i + 3)).SetLabelText(org[i])
