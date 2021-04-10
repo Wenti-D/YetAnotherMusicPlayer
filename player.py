@@ -183,10 +183,10 @@ class main_frame(wx.Frame):
         self.current_song_album_text = wx.StaticText(self.current_song_info_panel, wx.ID_ANY, "确定不放点歌吗", pos=(50, 163))
 
         self.song_title_font = wx.SystemSettings.GetFont(wx.SYS_DEFAULT_GUI_FONT)
-        self.song_title_font.SetPointSize(18)
+        self.song_title_font.SetPointSize(15)
         self.song_title_font.SetWeight(wx.FONTWEIGHT_BOLD)
         self.song_other_font = wx.SystemSettings.GetFont(wx.SYS_DEFAULT_GUI_FONT)
-        self.song_other_font.SetPointSize(12)
+        self.song_other_font.SetPointSize(11)
         
         self.current_song_title_text.SetOwnFont(self.song_title_font)
         self.current_song_artist_text.SetOwnFont(self.song_other_font)
@@ -333,15 +333,21 @@ class main_frame(wx.Frame):
                 song = MP3(self.music_folder + files)
                 try:
                     title = song.tags["TIT2"].text[0]
-                    artist = song.tags["TPE1"].text[0]
-                    album = song.tags["TALB"].text[0]
                 except:
                     self.music_title_list.append(files[:-4])
-                    self.artist_list.append('未知艺术家')
-                    self.album_list.append('未知专辑')
                 else:
                     self.music_title_list.append(title)
+                try:
+                    artist = song.tags["TPE1"].text[0]
+                except:
+                    self.artist_list.append('未知艺术家')
+                else:
                     self.artist_list.append(artist)
+                try:
+                    album = song.tags["TALB"].text[0]
+                except:
+                    self.album_list.append('未知专辑')
+                else:
                     self.album_list.append(album)
                 length = song.info.length
                 self.length_list.append(length)
@@ -351,15 +357,21 @@ class main_frame(wx.Frame):
                 song = FLAC(self.music_folder + files)
                 try:
                     title = song.tags['TITLE'][0]
-                    artist = song.tags['ARTIST'][0]
-                    album = song.tags['ALBUM'][0]
                 except:
                     self.music_title_list.append(files[:-5])
-                    self.artist_list.append('未知艺术家')
-                    self.album_list.append('未知专辑')
                 else:
                     self.music_title_list.append(title)
+                try:
+                    artist = song.tags['ARTIST'][0]
+                except:
+                    self.artist_list.append('未知艺术家')
+                else:
                     self.artist_list.append(artist)
+                try:
+                    album = song.tags['ALBUM'][0]
+                except:
+                    self.album_list.append('未知专辑')
+                else:
                     self.album_list.append(album)
                 length = song.info.length
                 self.length_list.append(length)
@@ -371,13 +383,13 @@ class main_frame(wx.Frame):
         获取MP3内嵌专辑封面并保存缩略图于 ./Album/
         """
         song = MP3(self.music_folder + filename)
-        #if not os.path.exists(self.music_folder + album + '.png'):
         try:
             album = song.tags["TALB"].text[0]
-            picture = song.tags.get("APIC:").data
-            album_pict = Image.open(BytesIO(picture))
-            album_pict.thumbnail((200, 200), resample=Image.BICUBIC)
-            album_pict.save(self.album_folder + album.replace('/','-') + '.png', 'png')
+            if not (os.path.exists(self.music_folder + album + '.png') or album == None):
+                picture = song.tags.get("APIC:").data
+                album_pict = Image.open(BytesIO(picture))
+                album_pict.thumbnail((200, 200), resample=Image.BICUBIC)
+                album_pict.save(self.album_folder + album.replace('/','-') + '.png', 'png')
         except:
             pass
     
@@ -386,13 +398,13 @@ class main_frame(wx.Frame):
         获取FLAC内嵌专辑封面并保存缩略图于 ./Album/
         """
         song = FLAC(self.music_folder + filename)
-        #if not os.path.exists(self.music_folder + album + '.png'):
         try:
             album = song.tags['ALBUM'][0]
-            picture = song.pictures[0].data
-            album_pict = Image.open(BytesIO(picture))
-            album_pict.thumbnail((200, 200), resample=Image.BICUBIC)
-            album_pict.save(self.album_folder + album.replace('/','-') + '.png', 'png')
+            if not os.path.exists(self.music_folder + album + '.png'):
+                picture = song.pictures[0].data
+                album_pict = Image.open(BytesIO(picture))
+                album_pict.thumbnail((200, 200), resample=Image.BICUBIC)
+                album_pict.save(self.album_folder + album.replace('/','-') + '.png', 'png')
         except:
             pass
 
@@ -403,7 +415,7 @@ class main_frame(wx.Frame):
         try:
             song = MP3(self.music_folder + filename)
             lyrics = song.tags.get("USLT::XXX")
-            if lyrics != None:
+            if not (lyrics == None or os.path.exists(self.lyrics_folder + filename[:-4] + '.lrc')):
                 file = open(self.lyrics_folder + filename[:-4] + '.lrc', "w", encoding='utf-8', newline="")
                 file.writelines(str(lyrics))
                 file.close()
@@ -417,9 +429,10 @@ class main_frame(wx.Frame):
         song = FLAC(self.music_folder + filename)
         try:
             lyrics = song.tags["LYRICS"][0]
-            file = open(self.lyrics_folder + filename[:-5] + ".lrc", "w", encoding="utf-8", newline="")
-            file.writelines(str(lyrics))
-            file.close()
+            if not os.path.exists(self.lyrics_folder + filename[:-5] + '.lrc'):
+                file = open(self.lyrics_folder + filename[:-5] + ".lrc", "w", encoding="utf-8", newline="")
+                file.writelines(str(lyrics))
+                file.close()
         except:
             pass
 
