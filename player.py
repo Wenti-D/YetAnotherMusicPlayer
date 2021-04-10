@@ -1,12 +1,14 @@
-import ctypes
-import inspect
+from ctypes import c_long
+from ctypes import py_object
+from ctypes import pythonapi
+from inspect import isclass
 import os
 import re
-import time
+from time import sleep
 from io import BytesIO
 from threading import Thread
 
-import pygame
+import pygame.mixer
 import wx
 import wx.lib.buttons as buttons
 from mutagen.flac import FLAC
@@ -19,9 +21,10 @@ class main_frame(wx.Frame):
         """
         构造
         """
-        pygame.init()
+        pygame.mixer.init()
         self.music = pygame.mixer.music
         self.current_song = 0
+        self.current_time = 0
         self.current_idx = 0
         self.volume = 1.0
 
@@ -272,7 +275,7 @@ class main_frame(wx.Frame):
         org = 5 * ['']
         trans = 5 * ['']
         double_line = 5 * [0]
-        while self.music.get_busy():
+        while self.music.get_busy() or self.current_time != 0:
             self.current_time = self.music.get_pos()
             the_current_time = self.current_time / 1000
             the_time = self.current_lyrics_lines[idx][0]
@@ -314,7 +317,7 @@ class main_frame(wx.Frame):
                     break
                 else:
                     idx += 1
-            time.sleep(.002)
+            sleep(.002)
 
     def get_local_music(self):
         """
@@ -509,7 +512,7 @@ class main_frame(wx.Frame):
         """
         播放/暂停按钮
         """
-        if self.music.get_busy():
+        if self.music.get_busy() or self.current_time != 0:
             if self.current_song:
                 self.music.pause()
                 self.current_song = 0
@@ -518,8 +521,6 @@ class main_frame(wx.Frame):
                 self.music.unpause()
                 self.current_song = 1
                 self.play_pause_button.SetBitmapLabel(wx.Bitmap("./assets/pause.png", wx.BITMAP_TYPE_ANY))
-        elif self.current_idx is not None:
-            self.play_song('a', self.current_idx)
         else:
             self.play_song('a', 0)
 
@@ -561,17 +562,17 @@ class main_frame(wx.Frame):
         """
         列表循环播放
         """
-        while self.music.get_busy():
+        while self.music.get_busy() or self.current_time != 0:
             current_time = self.music.get_pos() / 1000
             self.time_text_l.SetLabelText(self.time_formatting(current_time))
-            time.sleep(.5)
+            sleep(.2)
+            if current_time > (self.length_list[self.current_idx] - .4): break
+        if self.circle_button.GetValue():
+            self.next_song('a')
         else:
-            if self.circle_button.GetValue():
-                self.next_song('a')
-            else:
-                self.play_pause_button.SetBitmapLabel(wx.Bitmap("./assets/play.png", wx.BITMAP_TYPE_ANY))
-                self.control_panel.Refresh()
-            self.time_text_l.SetLabelText(self.time_formatting(0))
+            self.play_pause_button.SetBitmapLabel(wx.Bitmap("./assets/play.png", wx.BITMAP_TYPE_ANY))
+            self.control_panel.Refresh()
+        self.time_text_l.SetLabelText(self.time_formatting(0))
 
     def change_volume(self, evt):
         """
@@ -605,16 +606,16 @@ class main_frame(wx.Frame):
 
 def _async_raise(tid, exctype):
     """raises the exception, performs cleanup if needed"""
-    tid = ctypes.c_long(tid)
-    if not inspect.isclass(exctype):
+    tid = c_long(tid)
+    if not isclass(exctype):
         exctype = type(exctype)
-    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
+    res = pythonapi.PyThreadState_SetAsyncExc(tid, py_object(exctype))
     if res == 0:
         raise ValueError("invalid thread id")
     elif res != 1:
         # """if it returns a number greater than one, you're in trouble,
         # and you should call it again with exc=NULL to revert the effect"""
-        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
+        pythonapi.PyThreadState_SetAsyncExc(tid, None)
         raise SystemError("PyThreadState_SetAsyncExc failed")
 
 def stop_thread(thread):
